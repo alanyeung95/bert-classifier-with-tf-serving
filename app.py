@@ -126,7 +126,7 @@ def predict():
         "input_type_ids": encoded["input_type_ids"].numpy().tolist()
     }
 
-    response = requests.post(os.environ["BERT_CLASSIFIER_HOST"] ":8501/v1/models/bert" + ":predict", json={"inputs": inputJson}, timeout=2)
+    response = requests.post(os.environ["BERT_CLASSIFIER_HOST"] + ":8501/v1/models/bert" + ":predict", json={"inputs": inputJson}, timeout=2)
     response_json = response.json()
     result = tf.argmax(response_json["outputs"],1).numpy()
 
