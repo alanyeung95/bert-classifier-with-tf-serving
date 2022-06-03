@@ -18,7 +18,7 @@ curl --location --request POST 'ec2-44-193-17-101.compute-1.amazonaws.com:5000/p
         "sentence2": [
             "It mostly rains on the flat lands of Spain.",
             "Is it working? This does not match.",
-            "i love you",
+            "i love you too",
             "i hate you",
             "they are not the same"
         ]
