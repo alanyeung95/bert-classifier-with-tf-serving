@@ -29,3 +29,21 @@ jobs:
 
     - name: Docker Push
       run: docker push alanyeungdev/bert-classifier-server
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}      
+      with:
+        host: ${{ secrets.DEPLOYMENT_HOST }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: |
+          docker login
+          docker pull alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
