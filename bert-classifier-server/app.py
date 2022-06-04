@@ -113,7 +113,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return "Hello, Github Action!"
 
 @app.route("/predict", methods=["POST"])
 def predict():
