@@ -24,11 +24,11 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-    - name: Build the Docker image
-      run: docker build -t alanyeungdev/bert-classifier-server:latest -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
+    #- name: Build the Docker image
+    #  run: docker build -t alanyeungdev/bert-classifier-server:latest -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
 
-    - name: Docker Push
-      run: docker push alanyeungdev/bert-classifier-server
+    #- name: Docker Push
+    #  run: docker push alanyeungdev/bert-classifier-server
 
   deploy:
     needs: build
@@ -36,15 +36,12 @@ jobs:
     
     steps:
     - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@master
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}      
+      uses: appleboy/ssh-action@master   
       with:
         host: ${{ secrets.DEPLOYMENT_HOST }}
         username: ec2-user
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          docker login
-          docker pull alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
+          docker pull alanyeungdev/bert-classifier-server:71698e6c
