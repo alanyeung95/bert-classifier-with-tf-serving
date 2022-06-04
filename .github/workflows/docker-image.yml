@@ -46,7 +46,7 @@ jobs:
         port: 22
         script: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
-          docker pull alanyeungdev/bert-classifier-server:$IMAGE_TAG
+          docker pull alanyeungdev/bert-classifier-server:f70f0926
           docker stop bert-classifier-server
           docker rm bert-classifier-server
-          docker run --detach --name bert-classifier-server -p 5000:5000 alanyeungdev/bert-classifier-server:$IMAGE_TAG
+          docker run --detach --name bert-classifier-server -p 5000:5000 alanyeungdev/bert-classifier-server:f70f0926
