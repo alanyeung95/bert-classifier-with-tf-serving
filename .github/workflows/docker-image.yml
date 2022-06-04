@@ -44,6 +44,7 @@ jobs:
         username: ec2-user
         key: ${{ secrets.SSH_KEY }}
         port: 22
+        envs: IMAGE_TAG,GITHUB_SHA
         script: |
           echo $GITHUB_SHA
           echo $IMAGE_TAG
