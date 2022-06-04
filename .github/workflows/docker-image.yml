@@ -24,11 +24,11 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-    - name: Build the Docker image
-      run: docker build -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
+    #- name: Build the Docker image
+    #  run: docker build -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
 
-    - name: Docker Push
-      run: docker push alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
+    #- name: Docker Push
+    #  run: docker push alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
 
   deploy:
     needs: build
@@ -38,7 +38,7 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
       env:
-        IMAGE_TAG: ${GITHUB_SHA::8}     
+        IMAGE_TAG: f70f0926     
       with:
         host: ${{ secrets.DEPLOYMENT_HOST }}
         username: ec2-user
