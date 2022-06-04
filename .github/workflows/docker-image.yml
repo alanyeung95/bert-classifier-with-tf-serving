@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+defaults:
+  run:
+    shell: bash
+    working-directory: bert-classifier-server
+
 jobs:
 
   build:
