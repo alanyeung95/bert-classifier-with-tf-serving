@@ -44,4 +44,4 @@ jobs:
         port: 22
         script: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
-          docker pull alanyeungdev/bert-classifier-server:71698e6c
+          docker pull alanyeungdev/bert-classifier-server:latest
