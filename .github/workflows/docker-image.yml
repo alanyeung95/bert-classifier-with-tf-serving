@@ -31,23 +31,21 @@ jobs:
     #  run: docker push alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
 
   deploy:
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
     
     steps:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
       env:
-        IMAGE_TAG: ${GITHUB_SHA::8}     
+        IMAGE_TAG: f70f0926
       with:
         host: ${{ secrets.DEPLOYMENT_HOST }}
         username: ec2-user
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          echo ${{IMAGE_TAG}}
-          echo ${{GITHUB_SHA::8}}   
-          echo ${{GITHUB_SHA}}            
+          echo ${{IMAGE_TAG}}    
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
           docker pull alanyeungdev/bert-classifier-server:f70f0926
           docker stop bert-classifier-server
