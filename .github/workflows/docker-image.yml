@@ -25,7 +25,7 @@ jobs:
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag alanyeungdev/bert-classifier-server:$(date +%s)
-      
+      run: docker build -t alanyeungdev/bert-classifier-server:latest -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
+
     - name: Docker Push
       run: docker push alanyeungdev/bert-classifier-server
