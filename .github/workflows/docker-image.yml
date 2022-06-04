@@ -24,31 +24,28 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-    #- name: Build the Docker image
-    #  run: docker build -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
+    - name: Build the Docker image
+      run: docker build -t alanyeungdev/bert-classifier-server:${GITHUB_SHA::8} .
 
-    #- name: Docker Push
-    #  run: docker push alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
+    - name: Docker Push
+      run: docker push alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
 
   deploy:
-    # needs: build
+    needs: build
     runs-on: ubuntu-latest
     
     steps:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
-      env:
-        IMAGE_TAG: GITHUB_SHA
       with:
         host: ${{ secrets.DEPLOYMENT_HOST }}
         username: ec2-user
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        envs: IMAGE_TAG,GITHUB_SHA
+        envs: GITHUB_SHA
         script: |
-          echo ${GITHUB_SHA::8}
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
-          docker pull alanyeungdev/bert-classifier-server:f70f0926
+          docker pull alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
           docker stop bert-classifier-server
           docker rm bert-classifier-server
-          docker run --detach --name bert-classifier-server -p 5000:5000 alanyeungdev/bert-classifier-server:f70f0926
+          docker run --detach --name bert-classifier-server -p 5000:5000 alanyeungdev/bert-classifier-server:${GITHUB_SHA::8}
