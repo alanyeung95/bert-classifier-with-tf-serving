@@ -1,6 +1,19 @@
 # bert-classifier-with-tf-serving
 It is a classifier used for determining whether the sentences in the pair are semantically equivalent.
 
+# Getting Started
+
+## Cloud instance setting
+After renting a machine in aws ec2, use the following commands to initial the instance
+```
+sudo yum update -y 
+sudo yum install git -y
+sudo yum install gcc -y
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -a -G docker ec2-user # need to restart session to refresh the changes
+```
+
 # Usage
 Let's use curl cmd to try the API
 ```
