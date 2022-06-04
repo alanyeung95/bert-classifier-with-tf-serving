@@ -38,13 +38,14 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
       env:
-        IMAGE_TAG: :${GITHUB_SHA::8}     
+        IMAGE_TAG: ${GITHUB_SHA::8}     
       with:
         host: ${{ secrets.DEPLOYMENT_HOST }}
         username: ec2-user
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
+          echo ${IMAGE_TAG}
           echo ${{IMAGE_TAG}}
           echo ${{GITHUB_SHA::8}}   
           echo ${{GITHUB_SHA}}            
