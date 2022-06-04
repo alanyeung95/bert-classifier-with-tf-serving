@@ -45,7 +45,6 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          echo ${{IMAGE_TAG}}    
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{secrets.DOCKER_USER}} --password-stdin
           docker pull alanyeungdev/bert-classifier-server:f70f0926
           docker stop bert-classifier-server
