@@ -4,15 +4,24 @@ import logging
 
 import requests
 import tensorflow as tf
+from official import nlp
 from official.nlp import bert
 import official.nlp.bert.tokenization
 import tensorflow_datasets as tfds
 import numpy as np
 from flask import Flask, jsonify, request
 
+
 # Load the required submodules
+import official.nlp.optimization
 import official.nlp.bert.bert_models
 import official.nlp.bert.configs
+import official.nlp.bert.run_classifier
+import official.nlp.bert.tokenization
+import official.nlp.data.classifier_data_lib
+import official.nlp.modeling.losses
+import official.nlp.modeling.models
+import official.nlp.modeling.networks
 
 import logging
 import coloredlogs
@@ -114,6 +123,89 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return "Hello, Github Action!"
+
+@app.route("/train", methods=["POST"])
+def train():
+    glue_train = bert_encode(glue['train'], tokenizer)
+    glue_train_labels = glue['train']['label']
+
+    glue_validation = bert_encode(glue['validation'], tokenizer)
+    glue_validation_labels = glue['validation']['label']
+
+    glue_test = bert_encode(glue['test'], tokenizer)
+    glue_test_labels  = glue['test']['label']
+
+    bert_classifier, bert_encoder = bert.bert_models.classifier_model(
+    bert_config, num_labels=2)
+
+    # The batch size is a number of samples processed before the model is updated.
+    # The number of epochs is the number of complete passes through the training dataset.
+    # The size of a batch must be more than or equal to one and less than or equal to the number of samples in the training dataset.
+
+    # Set up epochs and steps
+    # epochs = 3
+    # batch_size = 32
+    epochs = 1
+    batch_size = 2
+    eval_batch_size = 32
+
+
+    train_data_size = len(glue_train_labels)
+    steps_per_epoch = int(train_data_size / batch_size)
+    num_train_steps = steps_per_epoch * epochs
+    warmup_steps = int(epochs * train_data_size * 0.1 / batch_size)
+
+    # creates an optimizer with learning rate schedule
+    optimizer = nlp.optimization.create_optimizer(2e-5, num_train_steps=num_train_steps, num_warmup_steps=warmup_steps)
+
+    # https://stats.stackexchange.com/questions/326065/cross-entropy-vs-sparse-cross-entropy-when-to-use-one-over-the-other
+    '''
+    Both, categorical cross entropy and sparse categorical cross entropy have the same loss function 
+    which you have mentioned above. The only difference is the format in which you mention Yi (i,e true labels).
+
+    If your Yi's are one-hot encoded, use categorical_crossentropy. Examples (for a 3-class classification): 
+    [1,0,0] , [0,1,0], [0,0,1]
+
+    But if your Yi's are integers, use sparse_categorical_crossentropy. Examples for above 3-class classification
+    [1] , [2], [3]
+
+    The usage entirely depends on how you load your dataset. One advantage of using sparse categorical 
+    cross entropy is it saves time in memory as well as computation because it simply uses a single integer 
+    for a class, rather than a whole vector.
+    '''
+
+    metrics = [tf.keras.metrics.SparseCategoricalAccuracy('accuracy', dtype=tf.float32)]
+    loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+
+    bert_classifier.compile(
+        optimizer=optimizer,
+        loss=loss,
+        metrics=metrics)
+
+    bert_classifier.fit(
+        glue_train, glue_train_labels,
+        validation_data=(glue_validation, glue_validation_labels),
+        batch_size=32,
+        epochs=epochs)
+
+    my_examples = bert_encode(
+        glue_dict = {
+            'sentence1':[
+                'The rain in Spain falls mainly on the plain.',
+                'Look I fine tuned BERT.'],
+            'sentence2':[
+                'It mostly rains on the flat lands of Spain.',
+                'Is it working? This does not match.']
+        },
+        tokenizer=tokenizer)
+
+    result = bert_classifier(my_examples, training=False)
+
+    result = tf.argmax(result).numpy()
+    result
+
+    export_dir='./saved_model'
+    tf.saved_model.save(bert_classifier, export_dir=export_dir)
 
 @app.route("/predict", methods=["POST"])
 def predict():
