@@ -18,7 +18,7 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
       with:
-        host: ${{ secrets.DEPLOYMENT_HOST_TF_SERVING }}
+        host: $DEPLOYMENT_HOST_TF_SERVING
         username: ec2-user
         key: ${{ secrets.SSH_KEY_TF_SERVING }}
         port: 22
