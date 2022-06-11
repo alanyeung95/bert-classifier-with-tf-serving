@@ -24,6 +24,7 @@ jobs:
         key: ${{ secrets.SSH_KEY_TF_SERVING }}
         source: "bert-tf-serving/models.config"
         target: "/home/ec2-user/model"
+        strip_components: 1
     
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
