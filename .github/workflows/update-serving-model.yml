@@ -2,9 +2,9 @@ name: Update Serving Model
 
 on: workflow_dispatch
 
-defaults:
-  run:
-    working-directory: bert-tf-serving
+#defaults:
+#  run:
+#    working-directory: bert-tf-serving
 
 jobs:
 
@@ -13,13 +13,14 @@ jobs:
     
     steps:
     - name: Copy model config
-      uses: garygrossgarten/github-action-scp@release
+      uses: appleboy/scp-action@master
       with:
-        local: models.config
-        remote: /home/ec2-user/model/models.config
         host: ${{ secrets.DEPLOYMENT_HOST_TF_SERVING }}
         username: ec2-user
-        privateKey: ${{ secrets.SSH_KEY_TF_SERVING }}
+        port: 22
+        key: ${{ secrets.SSH_KEY_TF_SERVING }}
+        source: "bert-tf-serving/models.config"
+        target: "/home/ec2-user/model/models.config"
     
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
