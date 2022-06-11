@@ -1,0 +1,27 @@
+name: Update Serving Model
+
+on: workflow_dispatch
+
+env:
+  DEPLOYMENT_HOST_TF_SERVING: http://ec2-3-93-198-160.compute-1.amazonaws.com
+  
+#defaults:
+#  run:
+#    working-directory: bert-classifier-server
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master   
+      with:
+        host: ${{ secrets.DEPLOYMENT_HOST_TF_SERVING }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY_TF_SERVING }}
+        port: 22
+        envs: GITHUB_SHA
+        script: |
+          echo "Hi Hi"
