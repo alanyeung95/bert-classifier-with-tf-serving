@@ -24,13 +24,17 @@ jobs:
     
     - name: Restart TF-Serving
       uses: appleboy/ssh-action@master   
+      env:
+       MODEL_VERSION: ${{ secrets.MODEL_VERSION }}     
       with:
         host: ${{secrets.DEPLOYMENT_HOST_TF_SERVING}}
         username: ec2-user
         key: ${{ secrets.SSH_KEY_TF_SERVING }}
         port: 22
-        envs: GITHUB_SHA
+        envs: GITHUB_SHA, MODEL_VERSION
         script: |
+          rm -rf /home/ec2-user/model/saved_model_bert/*
+          aws s3 cp s3://alanyeung-bert-classifier/saved_model_bert/$MODEL_VERSION /home/ec2-user/model/saved_model_bert/$MODEL_VERSION --recursive
           docker stop bert-tf-serving
           docker rm bert-tf-serving
           docker run --detach \
@@ -38,6 +42,6 @@ jobs:
             -p 8501:8501 \
             --mount type=bind,source=/home/ec2-user/model/saved_model_bert,target=/models/bert \
             --mount type=bind,source=/home/ec2-user/model/models.config,target=/models/models.config \
-            -e  MODEL_NAME=bert \
+            -e MODEL_NAME=bert \
             -t tensorflow/serving \
             --model_config_file=/models/models.config 
