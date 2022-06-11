@@ -2,17 +2,13 @@ name: Update Serving Model
 
 on: workflow_dispatch
 
-#defaults:
-#  run:
-#    working-directory: bert-tf-serving
-
 jobs:
 
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v1
       
     - name: Copy model config
@@ -26,7 +22,7 @@ jobs:
         target: "/home/ec2-user/model"
         strip_components: 1
     
-    - name: executing remote ssh commands using ssh key
+    - name: Restart TF-Serving
       uses: appleboy/ssh-action@master   
       with:
         host: ${{secrets.DEPLOYMENT_HOST_TF_SERVING}}
@@ -35,10 +31,9 @@ jobs:
         port: 22
         envs: GITHUB_SHA
         script: |
-          echo "Hi Hi"
           docker stop bert-tf-serving
           docker rm bert-tf-serving
-          docker run \
+          docker run --detach \
             --name bert-tf-serving \
             -p 8501:8501 \
             --mount type=bind,source=/home/ec2-user/model/saved_model_bert,target=/models/bert \
