@@ -3,7 +3,7 @@ name: Update Serving Model
 on: workflow_dispatch
 
 env:
-  DEPLOYMENT_HOST_TF_SERVING: http://ec2-3-93-198-160.compute-1.amazonaws.com
+  DEPLOYMENT_HOST_TF_SERVING: ec2-3-93-198-160.compute-1.amazonaws.com
   
 #defaults:
 #  run:
