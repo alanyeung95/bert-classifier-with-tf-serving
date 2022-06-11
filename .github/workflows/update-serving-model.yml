@@ -19,7 +19,7 @@ jobs:
         remote: /home/ec2-user/model/models.config
         host: ${{ secrets.DEPLOYMENT_HOST_TF_SERVING }}
         username: ec2-user
-        key: ${{ secrets.SSH_KEY_TF_SERVING }}
+        privateKey: ${{ secrets.SSH_KEY_TF_SERVING }}
     
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
