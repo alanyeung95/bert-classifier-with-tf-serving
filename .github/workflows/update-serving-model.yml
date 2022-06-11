@@ -2,9 +2,6 @@ name: Update Serving Model
 
 on: workflow_dispatch
 
-env:
-  DEPLOYMENT_HOST_TF_SERVING: ec2-3-93-198-160.compute-1.amazonaws.com
-  
 #defaults:
 #  run:
 #    working-directory: bert-classifier-server
@@ -18,7 +15,7 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master   
       with:
-        host: ${{DEPLOYMENT_HOST_TF_SERVING}}
+        host: ${{secrets.DEPLOYMENT_HOST_TF_SERVING}}
         username: ec2-user
         key: ${{ secrets.SSH_KEY_TF_SERVING }}
         port: 22
