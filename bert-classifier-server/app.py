@@ -209,7 +209,6 @@ def train():
 
 @app.route("/predict/<model_version>", methods=["POST"])
 def predict(model_version):
-    model_version = request.args["model_version"]
     text = request.json["glue_dict"]
 
     encoded = bert_encode(text, tokenizer=tokenizer)
