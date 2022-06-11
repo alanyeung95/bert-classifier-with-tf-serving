@@ -207,8 +207,9 @@ def train():
     export_dir='./saved_model'
     tf.saved_model.save(bert_classifier, export_dir=export_dir)
 
-@app.route("/predict", methods=["POST"])
-def predict():
+@app.route("/predict/<model_version>", methods=["POST"])
+def predict(model_version):
+    model_version = request.args["model_version"]
     text = request.json["glue_dict"]
 
     encoded = bert_encode(text, tokenizer=tokenizer)
@@ -218,7 +219,7 @@ def predict():
         "input_type_ids": encoded["input_type_ids"].numpy().tolist()
     }
 
-    response = requests.post(os.environ["BERT_CLASSIFIER_HOST"] + ":8501/v1/models/bert" + ":predict", json={"inputs": inputJson}, timeout=2)
+    response = requests.post(os.environ["BERT_CLASSIFIER_HOST"] + ":8501/v1/models/bert/versions/" + model_version +":predict", json={"inputs": inputJson}, timeout=2)
     response_json = response.json()
     result = tf.argmax(response_json["outputs"],1).numpy()
 
