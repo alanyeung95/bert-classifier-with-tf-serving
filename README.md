@@ -20,7 +20,7 @@ Then please refer to the readme insider bert-classifier-server and bert-tf-servi
 # Usage
 Let's use curl cmd to try the API
 ```
-curl --location --request POST 'ec2-44-193-17-101.compute-1.amazonaws.com:5000/predict' \
+curl --location --request POST 'ec2-44-193-17-101.compute-1.amazonaws.com:5000/predict/{model_version}' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "glue_dict": {
